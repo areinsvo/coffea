@@ -13,7 +13,7 @@ class CoffeaDataCallback:
     def on_job_finish(self, nsamples, error):
         self.coffea_accumulator += data["coffea_accumulator"]
 
-def striped_executor(datasets, session_name, proc_instance):
+def run_striped_job(datasets, session_name, proc_instance):
     data_collector = CoffeaDataCallback()
     session = Session(session_name)
     
@@ -31,7 +31,7 @@ def striped_executor(datasets, session_name, proc_instance):
             print "Output key %s = " %k
 
 # Not sure if we need to allow for a more generic executor function or just automatically call striped_executor above.
-def run_striped_job(exec_function):
+def run_dark_higgs():
     session_name = "striped_130tb.yaml"
     dataset = ["NanoTuples-2016_QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8"]
     # XX instantiate proc_instance
