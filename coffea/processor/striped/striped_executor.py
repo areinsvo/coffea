@@ -35,7 +35,7 @@ class CoffeaDataCallback:
     def on_data(self, wid, nevents, data):
         print("on_data being called")
         out =  pkl.loads(self.coffea_accumulator)
-        out += pkl.loadsdata["coffea_accumulator"]
+        out += pkl.loads(data["coffea_accumulator"])
         self.coffea_accumulator = pkl.dumps(out)
         self.count += 1
         print("finished with on_data")
