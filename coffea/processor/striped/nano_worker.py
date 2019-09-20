@@ -42,9 +42,10 @@ class Worker(object):
         #XX Could also accumulate here by returning self.out as done below. Can try both to see if it is faster.
         
     def end(self):
-        for k in self.out:
-            self.Job.message(str(self.out[k].integrate('dataset').values(overflow='all')))
-        return { "coffea_accumulator:" : lz4f.compress(pkl.dumps(self.out),compression_level=1)}
+#        for k in self.out:
+#            self.Job.message(str(self.out[k].integrate('dataset').values(overflow='all')))
+        return { "coffea_accumulator" : pkl.dumps(self.out)}
+#        return { "coffea_accumulator" : lz4f.compress(pkl.dumps(self.out),compression_level=1)}
         
 class Accumulator:
     
@@ -56,13 +57,13 @@ class Accumulator:
             self.Data = data.copy()
         else:
             for k, v in data.items():
-                self.Data[k] =  zipadd(self.Data[k],v)
+                self.Data[k] =  self.zipadd(self.Data[k],v)
 #                self.Data[k] += v
         
     def values(self):
         return self.Data
 
-    def zipadd(a, b):
-        out = pickle.loads(lz4f.decompress(a))
-        out += pickle.loads(lz4f.decompress(b))
-        return lz4f.compress(pickle.dumps(out), compression_level=1)
+    def zipadd(self,a, b):
+        out = pkl.loads(a)
+        out += pkl.loads(b)
+        return pkl.dumps(out)

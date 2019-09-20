@@ -29,14 +29,16 @@ class AnalysisProcessor(processor.ProcessorABC):
 class CoffeaDataCallback:
     
     def __init__(self, temp_acc):
-        self.coffea_accumulator = lz4f.compress(pkl.dumps(temp_acc),compression_level=1)
+        self.coffea_accumulator = pkl.dumps(temp_acc)
         self.count = 0
     
     def on_data(self, wid, nevents, data):
-        out =  pkl.loads(lz4f.decompress(self.coffea_accumulator))
-        out += pkl.loads(lz4f.decompress(data["coffea_accumulator"]))
-        self.coffea_accumulator = lz4f.compress(pkl.dumps(out),compression_level=1)
+        print("on_data being called")
+        out =  pkl.loads(self.coffea_accumulator)
+        out += pkl.loadsdata["coffea_accumulator"]
+        self.coffea_accumulator = pkl.dumps(out)
         self.count += 1
+        print("finished with on_data")
 
     def on_job_finish(self, nsamples, error):
         nsamples = nsamples
@@ -57,7 +59,7 @@ def run_striped_job(datasets, session_name, proc_instance):
                             callbacks = [data_collector],
                             worker_class_file="nano_worker.py")
         job.run()
-        final_accumulator = pkl.loads(lz4f.decompress(data_collector.coffea_accumulator))
+        final_accumulator = pkl.loads(data_collector.coffea_accumulator)
 #        final_accumulator += processor_instance.postprocess(pkl.loads(lz4f.decompress(data_collector.coffea_accumulator)))
  
     print(type(final_accumulator))
